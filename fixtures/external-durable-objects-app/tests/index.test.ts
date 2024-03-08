@@ -27,15 +27,18 @@ describe(
 		beforeAll(async () => {
 			a = await unstable_dev(path.join(__dirname, "../a/index.ts"), {
 				config: path.join(__dirname, "../a/wrangler.toml"),
+				experimental: { disableExperimentalWarning: true },
 			});
 			await setTimeout(1000);
 			b = await unstable_dev(path.join(__dirname, "../b/index.ts"), {
 				config: path.join(__dirname, "../b/wrangler.toml"),
+				experimental: { disableExperimentalWarning: true },
 			});
 			await setTimeout(1000);
 
 			c = await unstable_dev(path.join(__dirname, "../c/index.ts"), {
 				config: path.join(__dirname, "../c/wrangler.toml"),
+				experimental: { disableExperimentalWarning: true },
 			});
 			await setTimeout(1000);
 
