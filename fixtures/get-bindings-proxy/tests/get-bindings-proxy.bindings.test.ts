@@ -52,7 +52,6 @@ describe("getBindingsProxy - bindings", () => {
 
 	beforeAll(async () => {
 		devWorkers = await startWorkers();
-		await setTimeout(1000);
 	});
 
 	afterAll(async () => {
@@ -245,12 +244,14 @@ async function startWorkers(): Promise<UnstableDevWorker[]> {
 	const workersDirPath = path.join(__dirname, "..", "workers");
 	const workers = await readdir(workersDirPath);
 	return await Promise.all(
-		workers.map((workerName) => {
+		workers.map(async (workerName) => {
 			const workerPath = path.join(workersDirPath, workerName);
-			return unstable_dev(path.join(workerPath, "index.ts"), {
+			const w = await unstable_dev(path.join(workerPath, "index.ts"), {
 				config: path.join(workerPath, "wrangler.toml"),
 				experimental: { disableExperimentalWarning: true },
 			});
+			await setTimeout(1000);
+			return w;
 		})
 	);
 }
