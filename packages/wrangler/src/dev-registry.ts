@@ -25,22 +25,25 @@ export type WorkerDefinition = {
 };
 
 let watcher: ReturnType<typeof watch> | undefined;
-/**
- * Start the service registry. It's a simple server
- * that exposes endpoints for registering and unregistering
- * services, as well as getting the state of the registry.
- */
+
 export async function startWorkerRegistry() {
 	await mkdir(SERVICE_REGISTRY_PATH, { recursive: true });
 	watcher = watch(SERVICE_REGISTRY_PATH, {
 		persistent: true,
 	}).on("all", async () => {
+		let newWorkers = new Set<string>();
 		const workerDefinitions = await readdir(SERVICE_REGISTRY_PATH);
-		workers = {};
 		for (const file of workerDefinitions) {
 			workers[file] = JSON.parse(
 				await readFile(path.join(SERVICE_REGISTRY_PATH, file), "utf8")
 			);
+			newWorkers.add(file);
+		}
+
+		for (const worker of Object.keys(workers)) {
+			if (!newWorkers.has(worker)) {
+				delete workers[worker];
+			}
 		}
 	});
 }

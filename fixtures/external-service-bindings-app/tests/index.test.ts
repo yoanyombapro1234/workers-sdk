@@ -40,6 +40,8 @@ describe("Pages Functions", () => {
 				config: path.join(__dirname, "../module-worker-a/wrangler.toml"),
 			}
 		);
+		// TODO: unstable_dev doesn't reload local service bindings when they change, so make sure `module-worker-a` has definitely registered before continuing
+		await setTimeout(1_000);
 		wranglerInstances[1] = await unstable_dev(
 			path.join(__dirname, "../module-worker-b/index.ts"),
 			{
@@ -77,7 +79,6 @@ describe("Pages Functions", () => {
 				"--service=STAGING_MODULE_D_SERVICE=module-worker-d@staging",
 			],
 		});
-
 		pagesAppPort = wranglerInstances[5].port;
 	});
 
