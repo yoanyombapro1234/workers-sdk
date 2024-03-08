@@ -1,12 +1,21 @@
 import { readdir } from "fs/promises";
 import path from "path";
+import { setTimeout } from "timers/promises";
 import {
 	D1Database,
 	DurableObjectNamespace,
 	Fetcher,
 	R2Bucket,
 } from "@cloudflare/workers-types";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	afterAll,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 import { unstable_dev } from "wrangler";
 import { getBindingsProxy } from "./shared";
 import type { KVNamespace } from "@cloudflare/workers-types";
@@ -41,13 +50,14 @@ describe("getBindingsProxy - bindings", () => {
 	//       following beforeAll and afterAll should be un-commented when
 	//       we reenable the tests
 
-	// beforeAll(async () => {
-	// 	devWorkers = await startWorkers();
-	// });
+	beforeAll(async () => {
+		devWorkers = await startWorkers();
+		await setTimeout(1000);
+	});
 
-	// afterAll(async () => {
-	// 	await Promise.allSettled(devWorkers.map((i) => i.stop()));
-	// });
+	afterAll(async () => {
+		await Promise.allSettled(devWorkers.map((i) => i.stop()));
+	});
 
 	describe("var bindings", () => {
 		it("correctly obtains var bindings from both wrangler.toml and .dev.vars", async () => {
