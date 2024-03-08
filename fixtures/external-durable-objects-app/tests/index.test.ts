@@ -56,6 +56,7 @@ describe(
 					"pages",
 					"dev",
 					"public",
+					"--compatibility-date=2024-03-04",
 					"--do=PAGES_REFERENCED_DO=MyDurableObject@a",
 					"--port=0",
 					"--inspector-port=0",
