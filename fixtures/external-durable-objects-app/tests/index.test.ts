@@ -8,7 +8,7 @@ import type { UnstableDevWorker } from "wrangler";
 
 // TODO: reenable when https://github.com/cloudflare/workers-sdk/pull/4241 lands
 // and improves reliability of this test.
-describe.skip(
+describe(
 	"Pages Functions",
 	() => {
 		let a: UnstableDevWorker;

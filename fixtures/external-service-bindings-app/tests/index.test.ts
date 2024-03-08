@@ -29,7 +29,7 @@ type WranglerInstance = {
 	port: string;
 };
 
-describe.skip("Pages Functions", () => {
+describe("Pages Functions", () => {
 	let wranglerInstances: (WranglerInstance | UnstableDevWorker)[] = [];
 	let pagesAppPort: string;
 
