@@ -11,7 +11,7 @@ export const SERVICE_REGISTRY_PATH = path.join(
 
 export type WorkerRegistry = Record<string, WorkerDefinition>;
 
-let workers: WorkerRegistry = {};
+const workers: WorkerRegistry = {};
 
 export type WorkerDefinition = {
 	port: number | undefined;
@@ -31,7 +31,7 @@ export async function startWorkerRegistry() {
 	watcher = watch(SERVICE_REGISTRY_PATH, {
 		persistent: true,
 	}).on("all", async () => {
-		let newWorkers = new Set<string>();
+		const newWorkers = new Set<string>();
 		const workerDefinitions = await readdir(SERVICE_REGISTRY_PATH);
 		for (const file of workerDefinitions) {
 			workers[file] = JSON.parse(
