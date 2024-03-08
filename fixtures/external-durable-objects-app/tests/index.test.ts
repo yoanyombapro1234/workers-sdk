@@ -1,5 +1,6 @@
 import { fork } from "child_process";
 import * as path from "path";
+import { setTimeout } from "timers/promises";
 import { fetch } from "undici";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { unstable_dev } from "wrangler";
@@ -27,13 +28,16 @@ describe(
 			a = await unstable_dev(path.join(__dirname, "../a/index.ts"), {
 				config: path.join(__dirname, "../a/wrangler.toml"),
 			});
+			await setTimeout(1000);
 			b = await unstable_dev(path.join(__dirname, "../b/index.ts"), {
 				config: path.join(__dirname, "../b/wrangler.toml"),
 			});
+			await setTimeout(1000);
 
 			c = await unstable_dev(path.join(__dirname, "../c/index.ts"), {
 				config: path.join(__dirname, "../c/wrangler.toml"),
 			});
+			await setTimeout(1000);
 
 			dWranglerProcess = fork(
 				path.join(
@@ -63,6 +67,7 @@ describe(
 				dPort = parsedMessage.port;
 				dResolveReadyPromise(undefined);
 			});
+			await setTimeout(1000);
 		});
 
 		afterAll(async () => {
@@ -85,10 +90,6 @@ describe(
 
 		it("connects up Durable Objects and keeps state across wrangler instances", async () => {
 			await dReadyPromise;
-
-			// Service registry is polled every 300ms,
-			// so let's give all the Workers a little time to find each other
-			await new Promise((resolve) => setTimeout(resolve, 700));
 
 			const responseA = await a.fetch(`/`, {
 				headers: {
