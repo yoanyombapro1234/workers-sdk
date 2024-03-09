@@ -16,10 +16,9 @@ import {
 	it,
 	vi,
 } from "vitest";
-import { unstable_dev } from "wrangler";
+import { runWranglerDev } from "../../shared/src/run-wrangler-long-lived";
 import { getPlatformProxy } from "./shared";
 import type { KVNamespace } from "@cloudflare/workers-types";
-import type { UnstableDevWorker } from "wrangler";
 
 type Env = {
 	MY_VAR: string;
@@ -38,7 +37,7 @@ type Env = {
 const wranglerTomlFilePath = path.join(__dirname, "..", "wrangler.toml");
 
 describe("getPlatformProxy - bindings", () => {
-	let devWorkers: UnstableDevWorker[];
+	let devWorkers: Awaited<ReturnType<typeof startWorkers>>;
 
 	beforeEach(() => {
 		// Hide stdout messages from the test logs
@@ -245,12 +244,13 @@ async function startWorkers(): Promise<UnstableDevWorker[]> {
 	const workersDirPath = path.join(__dirname, "..", "workers");
 	const workers = await readdir(workersDirPath);
 	return await Promise.all(
-		workers.map((workerName) => {
+		workers.map(async (workerName) => {
 			const workerPath = path.join(workersDirPath, workerName);
-			return unstable_dev(path.join(workerPath, "index.ts"), {
-				config: path.join(workerPath, "wrangler.toml"),
-				experimental: { disableExperimentalWarning: true },
-			});
+			return await runWranglerDev(workerPath, [
+				"index.ts",
+				"--inspector-port=0",
+				"--port=0",
+			]);
 		})
 	);
 }
