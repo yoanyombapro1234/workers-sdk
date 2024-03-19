@@ -88,6 +88,7 @@ import {
 	SocketPorts,
 	Worker_Binding,
 	Worker_Module,
+	isSocketIdentifier,
 	kInspectorSocket,
 	serializeConfig,
 } from "./runtime";
@@ -1256,7 +1257,7 @@ export class Miniflare {
 		assert(config.sockets !== undefined);
 		const requiredSockets: SocketIdentifier[] = config.sockets.map(
 			({ name }) => {
-				assert(name !== undefined);
+				assert(isSocketIdentifier(name));
 				return name;
 			}
 		);
