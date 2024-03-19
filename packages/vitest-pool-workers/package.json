@@ -74,6 +74,9 @@
 		"@vitest/snapshot": "1.3.0",
 		"vitest": "1.3.0"
 	},
+	"engines": {
+		"node": ">=18"
+	},
 	"workers-sdk": {
 		"prerelease": true
 	},
