@@ -76,6 +76,7 @@ import type { Config } from "./config";
 import type { LoggerLevel } from "./logger";
 import type { CommonYargsArgv, SubHelp } from "./yargs-types";
 import type { Arguments } from "yargs";
+import { workflowsCommands } from "./workflows";
 
 const resetColor = "\x1b[0m";
 const fgGreenColor = "\x1b[32m";
@@ -598,6 +599,15 @@ export function createCLIParser(argv: string[]) {
 			await metrics.sendMetricsEvent("view accounts", {
 				sendMetrics: config.send_metrics,
 			});
+		}
+	);
+
+	// workflows
+	wrangler.command(
+		"workflows",
+		"Manage your workflows",
+		(workflowsYargs) => {
+			return workflowsCommands(workflowsYargs.command(subHelp));
 		}
 	);
 
