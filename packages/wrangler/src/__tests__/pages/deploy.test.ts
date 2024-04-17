@@ -796,7 +796,7 @@ describe("pages deploy", () => {
 
 	it("should read files to upload in batches from disk to avoid EMFILE errors", async () => {
 		// Write more than 1000 files to disk
-		for (let i = 0; i < 2000; i++) {
+		for (let i = 0; i < 4000; i++) {
 			writeFileSync(`logo-${i}.png`, "foobar".repeat(1000));
 		}
 		mockGetUploadTokenRequest(
