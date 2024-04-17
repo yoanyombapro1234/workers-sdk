@@ -794,6 +794,77 @@ describe("pages deploy", () => {
 	`);
 	});
 
+	it("should read files to upload in batches from disk to avoid EMFILE errors", async () => {
+		// Write more than 1000 files to disk
+		for (let i = 0; i < 2000; i++) {
+			writeFileSync(`logo-${i}.png`, "foobar".repeat(1000));
+		}
+		mockGetUploadTokenRequest(
+			"<<funfetti-auth-jwt>>",
+			"some-account-id",
+			"foo"
+		);
+
+		msw.use(
+			rest.post("*/pages/assets/check-missing", async (req, res, ctx) => {
+				const body = await req.json();
+				return res.once(
+					ctx.status(200),
+					ctx.json({
+						success: true,
+						errors: [],
+						messages: [],
+						result: body.hashes,
+					})
+				);
+			}),
+			rest.post("*/pages/assets/upload", async (_req, res, ctx) => {
+				return res(
+					ctx.status(200),
+					ctx.json({ success: true, errors: [], messages: [], result: null })
+				);
+			}),
+			rest.post(
+				"*/accounts/:accountId/pages/projects/foo/deployments",
+				async (_req, res, ctx) => {
+					return res.once(
+						ctx.status(200),
+						ctx.json({
+							success: true,
+							errors: [],
+							messages: [],
+							result: {
+								url: "https://abcxyz.foo.pages.dev/",
+							},
+						})
+					);
+				}
+			),
+			rest.get(
+				"*/accounts/:accountId/pages/projects/foo",
+				async (_req, res, ctx) => {
+					return res(
+						ctx.status(200),
+						ctx.json({
+							success: true,
+							errors: [],
+							messages: [],
+							result: { deployment_configs: { production: {}, preview: {} } },
+						})
+					);
+				}
+			)
+		);
+
+		await runWrangler("pages deploy . --project-name=foo");
+
+		expect(normalizeProgressSteps(std.out)).toMatchInlineSnapshot(`
+		"✨ Success! Uploaded 2000 files (TIMINGS)
+
+		✨ Deployment complete! Take a peek over at https://abcxyz.foo.pages.dev/"
+	`);
+	});
+
 	it("should resolve child directories correctly", async () => {
 		mkdirSync("public");
 		mkdirSync("public/imgs");
