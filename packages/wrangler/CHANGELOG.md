@@ -1,5 +1,11 @@
 # wrangler
 
+## 3.54.1
+
+### Patch Changes
+
+- [#5740](https://github.com/cloudflare/workers-sdk/pull/5740) [`97741db`](https://github.com/cloudflare/workers-sdk/commit/97741dbf8ff7498bcaa381361d61ad17af10f088) Thanks [@WalshyDev](https://github.com/WalshyDev)! - chore: log "Version ID" in `wrangler deploy`, `wrangler deployments list`, `wrangler deployments view` and `wrangler rollback` to support migration from the deprecated "Deployment ID". Users should update any parsing to use "Version ID" before "Deployment ID" is removed.
+
 ## 3.54.0
 
 ### Minor Changes
